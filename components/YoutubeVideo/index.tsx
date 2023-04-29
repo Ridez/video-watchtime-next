@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 import { io, Socket } from "socket.io-client";
+import VideoIdInput from "../VideoIdInput";
 
 const YoutubeVideo: React.FC = () => {
   const [domLoaded, setDomLoaded] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
+  const [videoId, setVideoId] = useState<string>("2x4aEnaVG_4");
   const playerRef = useRef<ReactPlayer | null>(null);
   const socketRef = useRef<Socket | null>(null);
 
@@ -33,7 +35,8 @@ const YoutubeVideo: React.FC = () => {
   useEffect(() => {
     if (socketRef.current?.connected) {
       socketRef.current.emit("createWatchtime", {
-        watchtime: currentTime,
+        watchtime: 1,
+        videoId,
       });
     }
   }, [currentTime]);
@@ -42,9 +45,10 @@ const YoutubeVideo: React.FC = () => {
     <>
       {domLoaded && (
         <div>
+          <VideoIdInput setVideoId={setVideoId} />
           <ReactPlayer
             ref={playerRef}
-            url="https://www.youtube.com/watch?v=2x4aEnaVG_4"
+            url={`https://www.youtube.com/watch?v=${videoId}`}
             playing={true}
             controls={true}
             onPlay={onPlay}
